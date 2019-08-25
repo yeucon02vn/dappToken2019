@@ -20,6 +20,12 @@ module.exports = {
       network_id:4, 
       gas: 4700000,
       },
+      ropsten:{
+        host: "localhost",
+        provider: new HDWalletProvider( mnemonic, "https://ropsten.infura.io/763fdca4ff774b1daa578d5c617672e3"),
+        network_id:3, 
+        gas: 4700000,
+        },
     solc: {
       optimizer: {
         enabled: true,

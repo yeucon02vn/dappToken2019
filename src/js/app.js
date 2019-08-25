@@ -6,6 +6,7 @@ App = {
     tokenPrice: 1000000000000000,
     tokensSold: 0,
     tokensAvailable: 750000,
+    test: '0x0',
 
     init: function() {
         console.log("App initialized...")
@@ -31,6 +32,8 @@ App = {
             App.contracts.DappTokenSale.setProvider(App.web3Provider);
             App.contracts.DappTokenSale.deployed().then(dappTokenSale => {
                 console.log("Dapp Token Sale Address:", dappTokenSale.address);
+                test = dappTokenSale.address;
+
             });
         }).done(function() {
             $.getJSON("DappToken.json", dappToken => {
@@ -57,6 +60,7 @@ App = {
     },
 
     render: function() {
+        
         if(App.loading)
             return;
         App.loading = true;
@@ -103,6 +107,7 @@ App = {
     },
 
     buyTokens: function() {
+        console.log(App.account , test);
         $('#content').hide();
         $('#loader').show();
         var numberOfTokens = $('#numberOfTokens').val();
@@ -118,7 +123,27 @@ App = {
             $('#loader').hide();
             $('#content').show();
         })
+    },
+
+    buyProducts: function() {
+        console.log(App.account , test);
+        $('#content').hide();
+        $('#loader').show();
+        var token = $('.article-price').text();
+        console.log(token);
+        App.contracts.DappTokenSale.deployed().then(instance => {
+            return instance.buyProducts(token, {
+                from: App.account,
+                gas: 500000
+            });
+        }).then(result => {
+            console.log("Product bought...");
+            $('form').trigger('reset');
+            $('#loader').hide();
+            $('#content').show();
+        })
     }
+
 
 }
 
