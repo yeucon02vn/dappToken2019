@@ -1,7 +1,7 @@
 {
-    "name": "inseclab-token-sale",
+    "name": "team-2-token",
     "version": "1.0.0",
-    "description": "InSecLab Token Sale IC0",
+    "description": "Team 2 Token Sale ",
     "main": "truffle-config.js",
     "directories": {
         "test": "test"
@@ -10,7 +10,7 @@
         "dev": "lite-server"
     },
     "author": "Phu",
-    "license": "ISC",
+    "license": "TM2",
     "devDependencies": {
         
     },

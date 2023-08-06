@@ -3,7 +3,7 @@ App = {
     contracts: {},
     account: '0x0',
     loading: false,
-    tokenPrice: 1000000000000000,
+    tokenPrice: 100000000000000,
     tokensSold: 0,
     tokensAvailable: 750000,
     test: '0x0',
@@ -20,27 +20,26 @@ App = {
             web3 = new Web3(web3.currentProvider);
           } else {
             // Specify default instance if no web3 instance provided
-            App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+            App.web3Provider = new Web3.providers.HttpProvider('https://sepolia.infura.io/v3/751ca2ab7c654cdf979c0e92e10c82f2');
             web3 = new Web3(App.web3Provider);
           }
           return App.initContracts();
     },
 
     initContracts: function() {
-        $.getJSON("DappTokenSale.json", dappTokenSale => {
-            App.contracts.DappTokenSale = TruffleContract(dappTokenSale);
-            App.contracts.DappTokenSale.setProvider(App.web3Provider);
-            App.contracts.DappTokenSale.deployed().then(dappTokenSale => {
-                console.log("Dapp Token Sale Address:", dappTokenSale.address);
-                test = dappTokenSale.address;
+        $.getJSON("TeamTokenSale.json", teamTokenSale => {
+            App.contracts.TeamTokenSale = TruffleContract(teamTokenSale);
+            App.contracts.TeamTokenSale.setProvider(App.web3Provider);
+            App.contracts.TeamTokenSale.deployed().then(teamTokenSale => {
+                console.log("Team Token Sale Address:", teamTokenSale.address);
 
             });
         }).done(function() {
-            $.getJSON("DappToken.json", dappToken => {
-                App.contracts.DappToken = TruffleContract(dappToken);
-                App.contracts.DappToken.setProvider(App.web3Provider);
-                App.contracts.DappToken.deployed().then(dappToken => {
-                    console.log("Dapp Token Address:", dappToken.address);
+            $.getJSON("TeamToken.json", teamToken => {
+                App.contracts.TeamToken = TruffleContract(teamToken);
+                App.contracts.TeamToken.setProvider(App.web3Provider);
+                App.contracts.TeamToken.deployed().then(teamToken => {
+                    console.log("Team Token Address:", teamToken.address);
                 });
                 App.listenForEvents();
                 return App.render();
@@ -49,7 +48,7 @@ App = {
     },
 
     listenForEvents: function() {
-        App.contracts.DappTokenSale.deployed().then(instance => {
+        App.contracts.TeamTokenSale.deployed().then(instance => {
             instance.Sell({}, {
                 fromBlock: 0,
                 toBlock: 'lastest',
@@ -78,26 +77,26 @@ App = {
             }
         })
 
-        App.contracts.DappTokenSale.deployed().then(function(instance) {
-            dappTokenSaleInstance = instance;
-            return dappTokenSaleInstance.tokenPrice();
+        App.contracts.TeamTokenSale.deployed().then(function(instance) {
+            TeamTokenSaleInstance = instance;
+            return TeamTokenSaleInstance.tokenPrice();
           }).then(function(tokenPrice) {
             App.tokenPrice = App.tokenPrice;
-            $('.token-price').html(web3.fromWei(tokenPrice, 'Ether').toNumber());
-            return dappTokenSaleInstance.tokensSold();
+            $('.token-price').html(web3.fromWei(tokenPrice, 'ether').toLocaleString('fullwide', {useGrouping:false}));
+            return TeamTokenSaleInstance.tokensSold();
           }).then(function(tokensSold) {
             App.tokensSold = tokensSold;
-            $('.tokens-sold').html(App.tokensSold.toNumber());
+            $('.tokens-sold').html(App.tokensSold);
             $('.tokens-available').html(App.tokensAvailable);
             
             var progressPrecent = (Math.ceil(App.tokensSold) / App.tokensAvailable) * 100;
             $('#progress').css('width', progressPrecent + '%');
             
-            App.contracts.DappToken.deployed().then(function(instance) {
-                dappTokenInstance = instance;
-                return dappTokenInstance.balanceOf(App.account);
+            App.contracts.TeamToken.deployed().then(function(instance) {
+                TeamTokenInstance = instance;
+                return TeamTokenInstance.balanceOf(App.account);
             }).then(function(balance) {
-                $('.dapp-balance').html(balance.toNumber());
+                $('.dapp-balance').html(balance.toLocaleString('fullwide', {useGrouping:false}));
                 App.loading = false;
                 loader.hide();
                 content.show();
@@ -107,16 +106,15 @@ App = {
     },
 
     buyTokens: function() {
-        console.log(App.account , test);
         $('#content').hide();
         $('#loader').show();
         var numberOfTokens = $('#numberOfTokens').val();
-        App.contracts.DappTokenSale.deployed().then(instance => {
-            return instance.buyTokens(numberOfTokens, {
-                from: App.account,
-                value:  App.tokenPrice * numberOfTokens,
-                gas: 500000
-            });
+        App.contracts.TeamTokenSale.deployed().then(instance => {
+        return instance.buyTokens(numberOfTokens, {
+            from: App.account,
+            value:  App.tokenPrice * numberOfTokens,
+            gas: 500000
+        });
         }).then(result => {
             console.log("Token bought...");
             $('form').trigger('reset');
@@ -126,12 +124,11 @@ App = {
     },
 
     buyProducts: function() {
-        console.log(App.account , test);
         $('#content').hide();
         $('#loader').show();
         var token = $('.article-price').text();
         console.log(token);
-        App.contracts.DappTokenSale.deployed().then(instance => {
+        App.contracts.TeamTokenSale.deployed().then(instance => {
             return instance.buyProducts(token, {
                 from: App.account,
                 gas: 500000
