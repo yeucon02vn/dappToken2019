@@ -68,8 +68,8 @@ contract TeamToken {
     }
 
     function transferFrom(address from, address to, uint256 amount) public virtual returns (bool) {
-        address spender = _msgSender();
-        _spendAllowance(from, spender, amount);
+        // address spender = _msgSender();
+        // _spendAllowance(from, spender, amount);
         _transfer(from, to, amount);
         return true;
     }
@@ -131,12 +131,5 @@ contract TeamToken {
 
     function allowance(address owner, address spender) public view virtual returns (uint256) {
         return _allowances[owner][spender];
-    }
-
-    function buy(uint256 _numberOfTokens) public payable returns (bool) {
-        // require(msg.value == multiply(_numberOfTokens, tokenPrice));
-        // require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
-        transfer(msg.sender , _numberOfTokens);
-        return true;
     }
 }

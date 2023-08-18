@@ -24,13 +24,8 @@ contract TeamTokenSale {
         tokenContract = _tokenContract;
     }
 
-    function multiply(uint x, uint y) internal pure returns (uint z) {
-        require(y == 0 || (z = x * y) / y == x);
-    }
-
     function buyTokens(uint256 _numberOfTokens) public payable returns (bool) {
-        // require(msg.value == multiply(_numberOfTokens, tokenPrice));
-        // require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
+
         require(tokenContract.transfer(msg.sender , _numberOfTokens));
 
         tokensSold += _numberOfTokens;
@@ -42,7 +37,7 @@ contract TeamTokenSale {
 
     
     function buyProducts(uint256 _numberOfTokens) public payable returns (bool) {
-        require(tokenContract.balanceOf(msg.sender) >= _numberOfTokens);
+        
         require(tokenContract.transferFrom(msg.sender, address(this), _numberOfTokens));
         require(tokensSold >= _numberOfTokens);
         tokensSold -= _numberOfTokens;
